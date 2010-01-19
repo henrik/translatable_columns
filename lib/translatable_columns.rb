@@ -5,23 +5,23 @@ module TranslatableColumns
   # These options are available:
   #
   # <ul>
-  # <li>+full_locale+, when *true* it uses the full locale in 
-  # the column names (e.g. _title_en_us_), when *false* (default!) it 
+  # <li>+full_locale+, when *true* it uses the full locale in
+  # the column names (e.g. _title_en_us_), when *false* (default!) it
   # uses only the language part (e.g. _title_en_)</li>
   # <li>+use_default+, when *false* it will not try to find a value
   # from other languages, when the request locale is nil. (default = true)
   # </li>
   # </ul>
   #
-  # To change the config globally, create an initializer or add to your 
+  # To change the config globally, create an initializer or add to your
   # environtment-file:
   #
   #   ActiveRecord::Base.translatable_columns_config.full_locale = false
-  #   ActiveRecord::Base.translatable_columns_config.set_default = true
+  #   ActiveRecord::Base.translatable_columns_config.use_default = true
   #
   class Config#nodoc:
     attr_accessor :full_locale, :use_default
-    
+
     def initialize
       set_defaults
     end
@@ -30,20 +30,20 @@ module TranslatableColumns
       @full_locale = false
       @use_default = true
     end
-  
+
   end
 
   module ClassMethods
 
-    # Accessor for the config, which makes sure you read from the same config 
+    # Accessor for the config, which makes sure you read from the same config
     # every time. See +Config+
     def translatable_columns_config
       @@translatable_columns_config ||= TranslatableColumns::Config.new
     end
 
-    
+
     # Used to define which columns can be translatable
-    #   
+    #
     #   class Topic < ActiveRecord::Base
     #     translatable_columns :title, :body, :use_default => false
     #   end
@@ -51,7 +51,7 @@ module TranslatableColumns
     # The use of the option +:use_default+ is optional and used to overwrite
     # the global config. See +Config+ for that.
     def translatable_columns(*columns)
-      
+
       options = columns.extract_options!
       options[:use_default] = translatable_columns_config.use_default unless options.has_key?(:use_default)
 
@@ -71,7 +71,7 @@ module TranslatableColumns
     # If a column doesn't exist, it'll default to the I18n.default_locale.
     def define_translated_getter_with_defaults(column)
       define_method column do
-        self.send(self.class.column_translated(column)) or 
+        self.send(self.class.column_translated(column)) or
         self.send(self.class.column_name_localized(column, I18n.default_locale)) or
         self.find_translated_value_for(column)
       end
@@ -127,7 +127,7 @@ module TranslatableColumns
     end
 
     # Validates presence of at least one of the localized columns.
-    # Usage is the same as +validates_presence_of+ 
+    # Usage is the same as +validates_presence_of+
     #
     # Translation scope of the error message is:
     #
