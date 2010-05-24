@@ -22,6 +22,10 @@ describe TranslatableColumns do
   it "should find all localized columns" do
     Topic.available_translatable_columns_of(:title).should include(*@columns)
   end
+  
+  it "should not find non-localized columns with the same prefix" do
+    Topic.available_translatable_columns_of(:title).should_not include("title_not_a_localization_column")
+  end
 
   it "should get the language of a locale" do
     Topic.column_locale('nl-BE').should == 'nl'

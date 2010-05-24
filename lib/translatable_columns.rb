@@ -110,9 +110,10 @@ module TranslatableColumns
     #
     #   available_translatable_columns_of("name") # => [ "name_en", "name_nl" ]
     #
-    # TODO It will also find non localized columns, if they start with the same name as the translatable name.
+    # NOTE that the plugin will get confused if you mix localization columns (e.g. "name_en") and non-localization columns
+    #      following this pattern (e.g. "name_me" or "name_it").
     def available_translatable_columns_of(name)
-      self.column_names.select { |column| column =~ /^#{name}_\w{2,}$/ }
+      self.column_names.select { |column| column =~ /^#{name}(_[a-z][a-z]){1,2}$/ }
     end
 
     # Returns true if a column exist for the supplied attribute name.
